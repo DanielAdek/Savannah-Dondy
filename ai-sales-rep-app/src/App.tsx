@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { ChatWindow } from './components/ChatWindow';
+import LandingPage from './pages/LandingPage';
+// import theme from './theme';
 
 const theme = createTheme({
   palette: {
@@ -15,7 +16,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container>
-        <ChatWindow />
+        <LandingPage />
       </Container>
     </ThemeProvider>
   );
