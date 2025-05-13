@@ -76,7 +76,7 @@ export class AiService {
     ] as OpenAI.ChatCompletionMessageParam[];
 
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4.1-mini-2025-04-14',
+      model: 'gpt-4.1-mini',
       messages,
     });
 
@@ -97,7 +97,7 @@ export class AiService {
       this.logger.error('Failed to parse LLM output as JSON', e);
     
       return {
-        reply: 'Sorry, something went wrong. Can you please rephrase?',
+        reply: 'Sorry, gpt-4.1-mini limit exceeded. Upgrade to paid version: gpt-4.1',
         tag: 'Not relevant',
         email: '',
         companyName: '',
