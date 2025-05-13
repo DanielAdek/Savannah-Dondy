@@ -17,10 +17,7 @@ export class ChatService {
    * Main orchestration: process incoming user message, update lead,
    * call AI for reply+tag, persist, and return response.
    */
-  async processMessage(
-    sessionId: string | undefined,
-    userText: string,
-  ): Promise<{
+  async processMessage(sessionId: string | undefined, userText: string): Promise<{
     sessionId: string;
     reply: string;
     tag: AiResult['tag'];
