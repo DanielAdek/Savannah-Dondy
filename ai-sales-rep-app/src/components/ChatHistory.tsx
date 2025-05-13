@@ -9,38 +9,33 @@ import {
   Typography,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
+import { History } from '../services/api';
 
-type Conversation = {
-  id: string;
-  lastMessage: string;
-  timestamp: string;
-  userName: string;
-};
 
 type Props = {
-  conversations: Conversation[];
-  onSelect: (id: string) => void;
+  conversations?: History[] | [];
+  onSelect: (id?: string) => void;
 };
 
 const ChatHistory = ({ conversations, onSelect }: Props) => (
-  <Box p={2}>
+  <Box>
     <List>
-      {conversations.map((conv) => (
-        <ListItem key={conv.id} onClick={() => onSelect(conv.id)}>
+      {conversations && conversations.map((conv) => (
+        <ListItem key={conv?.sessionId} onClick={() => onSelect(conv?.sessionId)}>
           <ListItemAvatar>
             <Avatar>
               <PersonIcon />
             </Avatar>
           </ListItemAvatar>
           <ListItemText
-            primary={conv.userName}
+            primary={conv?.chatHistory?.[conv.chatHistory.length - 1]?.from}
             secondary={
               <>
                 <Typography variant="body2" noWrap>
-                  {conv.lastMessage}
+                  {conv?.chatHistory?.[conv.chatHistory.length - 1]?.text}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {conv.timestamp}
+                  {new Date(conv?.chatHistory?.[conv.chatHistory.length - 1]?.timestamp!).toDateString()}
                 </Typography>
               </>
             }

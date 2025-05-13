@@ -7,7 +7,47 @@ export interface AiResult {
   tag: 'Not relevant' | 'Weak lead' | 'Hot lead' | 'Very big potential';
   email?: string;
   companyName?: string;
+  options?: string[];
 }
+
+
+const systemPrompt = `
+You are IntelliBrain’s AI sales assistant. 
+
+EVERY single response MUST be a single JSON object, and NOTHING else.
+
+Schema:
+{
+  "reply":     "<string — what the bot says next>",
+  "tag":       "<Not relevant|Weak lead|Hot lead|Very big potential>",
+  "email":     "<string — extracted email or empty>",
+  "companyName":"<string — extracted company or empty>",
+  "options":   ["<option1>", "<option2>", ...]   // empty array if none
+}
+
+Flow (examples):
+
+1) No prior messages:
+{"reply":"You are welcome to IntelliBrain. The world's most qualified talents. What talent do you want to hire?","tag":"Not relevant","email":"","companyName":"","options":["Frontend Developer","Backend Developer","Full Stack Developer","AI Engineer","DevOps Engineer"]}
+
+2) User picks a talent:
+{"reply":"When are you looking to hire?","tag":"Not relevant","email":"","companyName":"","options":["Immediately","2 weeks","1 month","3 months","Not sure"]}
+
+3) User picks timeline:
+{"reply":"What is your company name?","tag":"Not relevant","email":"","companyName":"","options":[]}
+
+4) User enters company:
+{"reply":"What is your email address?","tag":"Not relevant","email":"","companyName":"","options":[]}
+
+5) User enters email:
+{"reply":"What is your estimated budget or team size for this hire?","tag":"Not relevant","email":"","companyName":"<user’s company>","options":["< $1k","$1k–$5k","$5k–$20k","$20k+","Hiring multiple developers"]}
+
+6) User picks budget:
+{"reply":"Thanks! I’ll connect you with the right talent. Here’s our Calendly link: ...","tag":"Hot lead","email":"","companyName":"<user’s company>","options":[]}
+
+Always follow this schema exactly, even on free-text questions.
+`.trim();
+
 
 @Injectable()
 export class AiService {
@@ -15,10 +55,10 @@ export class AiService {
   private readonly logger = new Logger(AiService.name);
 
   constructor() {
-    // const config = {
-    //   apiKey: process.env.OPENAI_API_KEY,
-    // };
-    this.openai = new OpenAI();
+    const config = {
+      apiKey: process.env.OPENAI_API_KEY,
+    };
+    this.openai = new OpenAI(config);
   }
 
   /** 
@@ -27,49 +67,41 @@ export class AiService {
    */
   async analyzeLead(chat: ChatEntry[]): Promise<AiResult> {
     // System prompt
-    const messages = [
-      {
-        role: 'system',
-        content: `
-              You are a sales AI assistant for a software development company. Always respond ONLY with a strict JSON object that includes:
-              {"reply": "...", "tag": "...", "email": "...", "companyName": "..."}
-
-
-              Rules: 
-              1. Read the conversation and generate the next bot reply.
-              2. Ask qualifying questions
-              3. Evaluates lead quality.
-              4. Decide the lead tag: Not relevant, Weak lead, Hot lead, or Very big potential.
-              5. If you detect user's email or company name, extract them.
-              
-              Example response:
-              {"reply": "Thanks! Could you share your project timeline?", "tag": "Hot lead", "email": "", "companyName": ""}
-              `,
-      },
-      ...chat.map(entry => ({
-        role: entry.from === 'user' ? 'user' : 'assistant',
-        content: entry.text,
+    const messages: OpenAI.ChatCompletionMessageParam[] = [
+      { role: 'system', content: systemPrompt.trim() },
+      ...chat.map(e => ({
+        role: e.from === 'user' ? 'user' : 'assistant',
+        content: e.text,
       })),
     ] as OpenAI.ChatCompletionMessageParam[];
 
     const response = await this.openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4.1-mini-2025-04-14',
       messages,
     });
 
-    const content = response.choices[0].message.content.trim();
-    this.logger.debug(`LLM raw output: ${content}`);
+    const raw = response.choices[0].message.content.trim();
+    this.logger.debug(`LLM raw output: ${raw}`);
 
     try {
-      const jsonMatch = content.match(/\{[\s\S]*?\}/);
-      if (!jsonMatch) throw new Error('No JSON found');
+      const jsonMatch = raw.match(/\{[\s\S]*?\}/);
       const result = JSON.parse(jsonMatch[0]) as AiResult;
-      return result;
+      return {
+        reply: result.reply || 'Sorry, I didn’t quite get that. Could you clarify?',
+        tag: result.tag || 'Not relevant',
+        email: result.email || '',
+        companyName: result.companyName || '',
+        options: result.options || [],
+      };
     } catch (e) {
       this.logger.error('Failed to parse LLM output as JSON', e);
+    
       return {
-        reply: chat.slice(-1)[0].text,
-        tag: 'Weak lead',
+        reply: 'Sorry, something went wrong. Can you please rephrase?',
+        tag: 'Not relevant',
+        email: '',
+        companyName: '',
+        options: [],
       };
     }
     

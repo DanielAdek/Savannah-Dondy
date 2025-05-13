@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
+  CircularProgress,
   IconButton,
   Typography,
 } from '@mui/material';
@@ -9,37 +10,32 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ChatIcon from '@mui/icons-material/Chat'; // new icon
 import ChatWindow from './ChatWindow';
 import ChatHistory from './ChatHistory';
+import { fetchChatHistories, History } from '../services/api';
 
-type Conversation = {
-  id: string;
-  lastMessage: string;
-  timestamp: string;
-  userName: string;
-};
-
-const mockConversations: Conversation[] = [
-  {
-    id: '1',
-    lastMessage: 'Can we schedule a call tomorrow?',
-    timestamp: '2025-05-13 10:32 AM',
-    userName: 'Daniel',
-  },
-  {
-    id: '2',
-    lastMessage: 'We’re looking to hire two backend devs.',
-    timestamp: '2025-05-12 4:45 PM',
-    userName: 'Jenna',
-  },
-];
 
 const ChatBox = ({ onClose }: { onClose: () => void }) => {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [isNewChat, setIsNewChat] = useState<boolean>(false); // new state
+  const [isNewChat, setIsNewChat] = useState<boolean>(false);
+  const [histories, setHistories] = useState<History[] | []>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      handleFetchHistories();
+      setLoading(false);
+    })();
+  }, []);
 
   const handleBack = () => {
+    handleFetchHistories();
     setSelectedConversationId(null);
     setIsNewChat(false);
   };
+
+  const handleFetchHistories = async () => {
+    const hists = await fetchChatHistories();
+    setHistories(hists);
+  }
 
   const handleNewChat = () => {
     setIsNewChat(true);
@@ -77,7 +73,7 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
             </IconButton>
           )}
           <Typography variant="body1">
-            {(selectedConversationId || isNewChat) ? 'AI Assistant' : 'Chat History'}
+            {(selectedConversationId || isNewChat) ? 'Danibot' : 'Chat History'}
           </Typography>
         </Box>
         {!(selectedConversationId || isNewChat) ? (
@@ -90,18 +86,25 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
           </IconButton>
         )}
       </Box>
+      { loading && 
+        <div>
+          <CircularProgress size={30}/>
+          <div style={{fontSize: "5px important!;"}}>Chat Loading...</div>
+        </div>}
+
+        {
+          (!histories?.length && !selectedConversationId) && <div style={{margin: 10}}>Click the chat icon at the top right!</div>
+        }
 
       {/* Content */}
       <Box flexGrow={1} overflow="auto">
         {(selectedConversationId || isNewChat) ? (
-          <ChatWindow conversationId={selectedConversationId || 'new'} onClose={function (): void {
-            throw new Error('Function not implemented.');
-          } } />
+          <ChatWindow conversationId={selectedConversationId || 'new'} />
         ) : (
           <ChatHistory
-            conversations={mockConversations}
+            conversations={histories}
             onSelect={(id) => {
-              setSelectedConversationId(id);
+              setSelectedConversationId(id!);
               setIsNewChat(false);
             }}
           />

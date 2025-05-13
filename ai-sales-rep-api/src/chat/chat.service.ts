@@ -17,10 +17,11 @@ export class ChatService {
    * Main orchestration: process incoming user message, update lead,
    * call AI for reply+tag, persist, and return response.
    */
-  async processMessage(sessionId: string | undefined, userText: string): Promise<{
+  public async processMessage(sessionId: string | undefined, userText: string): Promise<{
     sessionId: string;
     reply: string;
     tag: AiResult['tag'];
+    options: AiResult['options'];
     calendlyLink?: string;
   }> {
     // 1. Initialize session
@@ -42,7 +43,7 @@ export class ChatService {
 
     // 5. Append bot reply, update tag/email/company
     const botEntry: ChatEntry = { from: 'bot', text: aiResult.reply, timestamp: new Date() };
-    const updated = await this.leadService.upsertLead(
+    await this.leadService.upsertLead(
       sessionId,
       botEntry,
       aiResult.tag,
@@ -60,6 +61,7 @@ export class ChatService {
       sessionId,
       reply: replyWithLink,
       tag: aiResult.tag,
+      options: aiResult.options,
       calendlyLink: aiResult.tag !== 'Not relevant' && aiResult.tag !== 'Weak lead'
         ? CALENDLY_URL
         : undefined,
@@ -67,8 +69,13 @@ export class ChatService {
   }
 
   /** Fetch historic chat entries for a session */
-  async getHistory(sessionId: string) {
+  public async getHistory(sessionId: string) {
     const lead = await this.leadService.findBySessionId(sessionId);
-    return lead?.chatHistory || [];
+    return lead?.chatHistory.slice(1, lead?.chatHistory.length) || [];
+  }
+
+  public async getHistories() {
+    const lead = await this.leadService.findAllChatHistories();
+    return lead || [];
   }
 }

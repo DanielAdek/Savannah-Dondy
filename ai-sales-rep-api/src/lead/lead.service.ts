@@ -11,15 +11,19 @@ export class LeadService {
     @InjectModel(Lead.name) private leadModel: Model<LeadDocument>,
   ) {}
 
-  async findBySessionId(sessionId: string) {
+  public async findBySessionId(sessionId: string) {
     return this.leadModel.findOne({ sessionId });
   }
 
-  async createSession(sessionId: string) {
+  public async findAllChatHistories() {
+    return this.leadModel.find();
+  }
+
+  public async createSession(sessionId: string) {
     return this.leadModel.create({ sessionId });
   }
 
-  async upsertLead(
+  public async upsertLead(
     sessionId: string,
     entry: ChatEntry,
     tag: Lead['tag'],

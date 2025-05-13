@@ -34,7 +34,7 @@ export class Lead {
   @Prop()
   companyName?: string;
 
-  @Prop({ default: 'Weak lead', enum: ['Not relevant','Weak lead','Hot lead','Very big potential'] })
+  @Prop({ default: 'Not relevant', enum: ['Not relevant','Weak lead','Hot lead','Very big potential'] })
   tag: LeadTag;
 
   @Prop({ type: [ChatEntrySchema], default: [] })

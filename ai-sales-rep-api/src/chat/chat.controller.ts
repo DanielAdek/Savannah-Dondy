@@ -15,4 +15,9 @@ export class ChatController {
   public async history(@Param('sessionId') sessionId: string) {
     return { history: await this.chatService.getHistory(sessionId) };
   }
+
+  @Get('histories')
+  public async histories() {
+    return { histories: await this.chatService.getHistories() };
+  }
 }
