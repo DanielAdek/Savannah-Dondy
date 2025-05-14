@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const backend = "https://intellibran-api.onrender.com";
+const backend = process.env.REACT_APP_BACKEND_URL || "https://intellibran-api.onrender.com";
 
 export interface ChatResponse {
   reply: string;

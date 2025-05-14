@@ -34,7 +34,7 @@ Flow (examples):
 {"reply":"When are you looking to hire?","tag":"Not relevant","email":"","companyName":"","options":["Immediately","2 weeks","1 month","3 months","Not sure"]}
 
 3) User picks timeline:
-{"reply":"What is your company name?","tag":"Not relevant","email":"","companyName":"","options":[]}
+{"reply":"Let's gather some information about you, What is your company name?","tag":"Not relevant","email":"","companyName":"","options":[]}
 
 4) User enters company:
 {"reply":"What is your email address?","tag":"Not relevant","email":"","companyName":"","options":[]}
@@ -78,9 +78,11 @@ export class AiService {
     const response = await this.openai.chat.completions.create({
       model: 'gpt-4.1-mini',
       messages,
+      temperature: 0
     });
 
     const raw = response.choices[0].message.content.trim();
+
     this.logger.debug(`LLM raw output: ${raw}`);
 
     try {
@@ -97,7 +99,7 @@ export class AiService {
       this.logger.error('Failed to parse LLM output as JSON', e);
     
       return {
-        reply: 'Sorry, gpt-4.1-mini limit exceeded. Upgrade to paid version: gpt-4.1',
+        reply: raw,
         tag: 'Not relevant',
         email: '',
         companyName: '',
