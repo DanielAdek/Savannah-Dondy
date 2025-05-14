@@ -40,7 +40,7 @@ Flow (examples):
 {"reply":"What is your email address?","tag":"Not relevant","email":"","companyName":"","options":[]}
 
 5) User enters email:
-{"reply":"What is your estimated budget or team size for this hire?","tag":"Not relevant","email":"","companyName":"<user’s company>","options":["< $1k","$1k–$5k","$5k–$20k","$20k+","Hiring multiple developers"]}
+{"reply":"What is your estimated budget or team size for this hire?","tag":"Not relevant","email":"","companyName":"<user’s company>","options":[]}
 
 6) User picks budget:
 {"reply":"Thanks! I’ll connect you with the right talent. Here’s our Calendly link: ...","tag":"Hot lead","email":"","companyName":"<user’s company>","options":[]}
