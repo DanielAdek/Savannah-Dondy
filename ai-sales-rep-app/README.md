@@ -1,46 +1,99 @@
-# Getting Started with Create React App
+# 🧠 AI Assistant Frontend for Software Development Company
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a modern frontend application built with **React** and **TypeScript**. It serves as an interactive AI assistant for a software development company, offering engaging user experiences on a polished landing page.
 
-## Available Scripts
+The assistant allows users to chat in real time, get guidance, and learn about available services or talent through a conversational interface.
 
-In the project directory, you can run:
+## 📦 Tech Stack
 
-### `npm start`
+- **React** (Functional Components + Hooks)
+- **TypeScript** (strict typing)
+- **Material UI** (Specify styling method)
+- **Axios** for API communication
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 📁 Project Structure
+```bash
+src/
+├── components/
+│ ├── ChatBox.tsx
+│ ├── ChatHistory.tsx
+│ ├── ChatWidget.tsx
+│ ├── ClientsSection.tsx
+│ ├── Footer.tsx
+│ ├── HeroSection.tsx
+│ ├── MessageBubble.tsx
+│ ├── Navbar.tsx
+│ └── TalentsSection.tsx
+│
+├── pages/
+│ └── LandingPage.tsx
+│
+├── services/
+│ └── api.ts
+│
+├── App.tsx
+└── index.tsx
+```
 
-### `npm test`
+## 🧩 Components Overview
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 💬 `ChatBox`
+Encapsulates the AI assistant's message input and display area. Manages conversation flow, input state, and triggers API calls.
 
-### `npm run build`
+### 📜 `ChatHistory`
+Displays a scrollable log of all past chat interactions between the user and the assistant.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🔘 `ChatWidget`
+Acts as a floating or embedded toggle to open/close the AI assistant. Integrates `ChatBox` and `ChatHistory`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 👥 `ClientsSection`
+Highlights trusted clients or partners with logos/testimonials to build trust with users.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🚀 `HeroSection`
+The top section of the landing page showcasing the company’s value proposition, call to action (CTA), and introductory content.
 
-### `npm run eject`
+### 🧠 `MessageBubble`
+Renders individual messages in the chat history, supporting different alignments or message types (user/AI).
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 🔝 `Navbar`
+Responsive navigation bar containing links to different parts of the page or external resources.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 👨‍💻 `TalentsSection`
+Highlights featured engineers or team members, showcasing their skills or profiles.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 🦶 `Footer`
+Contains legal links, contact info, social media, and other secondary links.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+---
 
-## Learn More
+## 📄 Pages
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 🏠 `LandingPage`
+The main marketing page that integrates all UI components and serves as the user’s entry point. It embeds the AI assistant via the `ChatWidget`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
+
+## 🔌 Services
+
+### `api.ts`
+Handles all API calls between the frontend and the backend or AI service. Typically includes:
+
+- `sendMessage(message: string): Promise<ChatResponse>`
+- `fetchChatHistory(): Promise<ChatMessage[]>`
+
+Uses `axios` or `fetch` to communicate with backend services or AI inference engines.
+
+---
+
+## ⚙️ Getting Started
+
+### 📥 Installation
+
+```bash
+$ git clone https://github.com/DanielAdek/Savannah-Dondy/ai-sales-rep-app.git
+$ cd ai-sales-rep-app
+$ yarn install
+$ yarn start
+```
