@@ -13,15 +13,32 @@ import ChatHistory from './ChatHistory';
 import { fetchChatHistories, History } from '../services/api';
 
 
-const ChatBox = ({ onClose }: { onClose: () => void }) => {
+const ChatBox = ({
+  onClose,
+  startNewChat,
+  onStarted,
+}: {
+  onClose: () => void;
+  startNewChat?: boolean;
+  onStarted?: () => void;
+}) => {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [isNewChat, setIsNewChat] = useState<boolean>(false);
   const [histories, setHistories] = useState<History[] | []>();
   const [loading, setLoading] = useState(true);
 
+  // Trigger new chat if `startNewChat` is passed
+  useEffect(() => {
+    if (startNewChat) {
+      setIsNewChat(true);
+      setSelectedConversationId('new');
+      onStarted?.(); // reset flag in parent
+    }
+  }, [startNewChat]);
+
   useEffect(() => {
     (async () => {
-      handleFetchHistories();
+      await handleFetchHistories();
       setLoading(false);
     })();
   }, []);
@@ -35,11 +52,11 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
   const handleFetchHistories = async () => {
     const hists = await fetchChatHistories();
     setHistories(hists);
-  }
+  };
 
   const handleNewChat = () => {
     setIsNewChat(true);
-    setSelectedConversationId('new'); // placeholder ID for new chats
+    setSelectedConversationId('new');
   };
 
   return (
@@ -58,14 +75,7 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
       zIndex={1001}
     >
       {/* Header */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        p={2}
-        bgcolor="primary.main"
-        color="white"
-      >
+      <Box display="flex" justifyContent="space-between" alignItems="center" p={2} bgcolor="primary.main" color="white">
         <Box display="flex" alignItems="center">
           {(selectedConversationId || isNewChat) && (
             <IconButton size="small" onClick={handleBack} sx={{ color: 'white', mr: 1 }}>
@@ -86,17 +96,19 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
           </IconButton>
         )}
       </Box>
-      { loading && 
-        <div>
-          <CircularProgress size={30}/>
-          <div style={{fontSize: "5px important!;"}}>Chat Loading...</div>
-        </div>}
 
-        {
-          (!histories?.length && !selectedConversationId) && <div style={{margin: 10}}>Click the chat icon at the top right!</div>
-        }
+      {loading && (
+        <Box display="flex" alignItems="center" justifyContent="center" p={2}>
+          <CircularProgress size={30} />
+          <Typography sx={{ fontSize: 12, ml: 1 }}>Chat Loading...</Typography>
+        </Box>
+      )}
 
-      {/* Content */}
+      {!histories?.length && !selectedConversationId && !isNewChat && (
+        <Box p={2}>Click the chat icon at the top right!</Box>
+      )}
+
+      {/* Chat Content */}
       <Box flexGrow={1} overflow="auto">
         {(selectedConversationId || isNewChat) ? (
           <ChatWindow conversationId={selectedConversationId || 'new'} />
@@ -113,5 +125,6 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
     </Box>
   );
 };
+
 
 export default ChatBox;
