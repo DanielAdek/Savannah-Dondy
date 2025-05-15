@@ -75,7 +75,7 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
       </Box>
 
       {/* only show free-text input when no options */}
-      {options.length===0 && <InputBox onSend={send}/>}
+      <InputBox onSend={send}/>
     </Box>
   );
 };
