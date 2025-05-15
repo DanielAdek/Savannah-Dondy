@@ -83,7 +83,7 @@ export const LeadsPage = () => {
                     <TableCell>{lead.companyName || '—'}</TableCell>
                     <TableCell>{lead.tag}</TableCell>
                     <TableCell>
-                      {lead.chatHistory?.map((msg, i) => (
+                      {lead.chatHistory?.slice(1, 100).map((msg, i) => (
                         <div key={i}>
                           <strong>{msg.from === 'bot' ? 'Bot' : 'User'}:</strong> {msg.text}
                         </div>
