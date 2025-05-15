@@ -16,7 +16,7 @@ const Navbar = () => {
             color="inherit"
             onClick={() => navigate('/leads')}
           >
-            View Leads
+            Admin View
           </Button>
 
           <Button
