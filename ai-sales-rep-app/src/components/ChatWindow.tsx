@@ -3,6 +3,8 @@ import { Box, Typography, CircularProgress, Button } from '@mui/material';
 import { fetchChatHistory, sendMessage, Message as ChatMessage } from '../services/api';
 import { InputBox } from './InputBox';
 import { MessageBubble } from './MessageBubble';
+import { BotTypingIndicator } from "./ChatBotTyping";
+
 
 const ChatWindow = ({ conversationId }: { conversationId: string }) => {
   const isNew = conversationId === 'new';
@@ -36,20 +38,12 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
   }, [messages, options]);
 
   const send = async (text: string) => {
-    // Remove old options immediately on manual send
     setOptions([]);
-  
-    // Append user's message
     setMessages(prev => [...prev, { from: 'user', text }]);
     setLoading(true);
-  
-    // Send to backend and await response
+
     const res = await sendMessage(text, sessionId);
-  
-    // Append bot's response
     setMessages(prev => [...prev, { from: 'bot', text: res.reply }]);
-  
-    // Set new options (if any)
     setOptions(res.options || []);
     setLoading(false);
   };
@@ -62,10 +56,9 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
       width="100%"
       overflow="hidden"
     >
-      {/* Messages and Options */}
       <Box flexGrow={1} overflow="auto" p={1}>
         {loadingHistory ? (
-          <Typography>Loading…</Typography>
+          <BotTypingIndicator />
         ) : (
           <>
             {messages.map((m, i) => (
@@ -86,13 +79,13 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
                 ))}
               </Box>
             )}
-            {loading && <CircularProgress size={20} />}
+
+            {loading && <BotTypingIndicator />}
             <div ref={chatEnd} />
           </>
         )}
       </Box>
 
-      {/* Input Box (Always at bottom) */}
       <Box px={1} py={1} borderTop="1px solid #eee">
         <InputBox onSend={send} />
       </Box>
