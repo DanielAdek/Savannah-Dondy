@@ -18,9 +18,14 @@ export const MessageBubble = ({ text, from }: MessageProps) => {
         px={2}
         py={1}
         maxWidth="75%"
-        bgcolor={isUser ? 'primary.main' : 'grey.300'}
+        bgcolor={isUser ? 'primary.main' : '#e3f2fd'}
         color={isUser ? 'white' : 'black'}
         borderRadius={4}
+        sx={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          whiteSpace: 'pre-wrap',
+        }}
       >
         <Typography variant="body1">{text}</Typography>
       </Box>
