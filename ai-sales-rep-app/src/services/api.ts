@@ -21,6 +21,8 @@ export type History = {
   id: string;
   sessionId: string;
   tag: string;
+  email: string;
+  companyName: string;
   chatHistory: Message[];
 }
 

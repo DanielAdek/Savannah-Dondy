@@ -1,7 +1,14 @@
 import React from 'react';
-import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import {
+  Container,
+  CssBaseline,
+  ThemeProvider,
+  createTheme,
+} from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import LandingPage from './pages/LandingPage';
-// import theme from './theme';
+import {LeadsPage} from './pages/LeadsPage';
 
 const theme = createTheme({
   palette: {
@@ -15,9 +22,14 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container>
-        <LandingPage />
-      </Container>
+      <Router>
+        <Container>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/leads" element={<LeadsPage />} />
+          </Routes>
+        </Container>
+      </Router>
     </ThemeProvider>
   );
 }
