@@ -17,7 +17,7 @@ export const LeadsPage = () => {
   useEffect(() => {
     const loadLeads = async () => {
       try {
-        const res = await fetchChatHistories();
+        const res = await fetchChatHistories(localStorage.getItem('user-x') as string);
         setLeads(res);
       } catch (e) {
         console.error('Failed to fetch leads:', e);

@@ -6,9 +6,9 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  public async chat(@Body() body: { sessionId?: string; message: string }) {
-    const { sessionId, message } = body;
-    return this.chatService.processMessage(sessionId, message);
+  public async chat(@Body() body: { sessionId?: string; message: string, userId: string }) {
+    const { sessionId, message, userId } = body;
+    return this.chatService.processMessage(sessionId, message, userId);
   }
 
   @Get('history/:sessionId')
@@ -16,8 +16,8 @@ export class ChatController {
     return { history: await this.chatService.getHistory(sessionId) };
   }
 
-  @Get('histories')
-  public async histories() {
-    return { histories: await this.chatService.getHistories() };
+  @Get('histories/:userId')
+  public async histories(@Param('userId') userId: string) {
+    return { histories: await this.chatService.getHistories(userId) };
   }
 }

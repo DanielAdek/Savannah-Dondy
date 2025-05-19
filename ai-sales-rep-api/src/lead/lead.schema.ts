@@ -29,6 +29,9 @@ export class Lead {
   sessionId: string;
 
   @Prop()
+  userId: string;
+  
+  @Prop()
   email?: string;
 
   @Prop()

@@ -17,7 +17,7 @@ export class ChatService {
    * Main orchestration: process incoming user message, update lead,
    * call AI for reply+tag, persist, and return response.
    */
-  public async processMessage(sessionId: string | undefined, userText: string): Promise<{
+  public async processMessage(sessionId: string | undefined, userText: string, userId: string): Promise<{
     sessionId: string;
     reply: string;
     tag: AiResult['tag'];
@@ -26,13 +26,18 @@ export class ChatService {
   }> {
     // 1. Initialize session
     if (!sessionId) {
+      console.log("__Got session here__");
       sessionId = uuid();
-      await this.leadService.createSession(sessionId);
+      await this.leadService.createSession(sessionId, userId);
     }
+
+    console.log("__user__", userId);
+    console.log("__session__", sessionId);
+    console.log("__message__", userText);
 
     // 2. Append user message
     const userEntry: ChatEntry = { from: 'user', text: userText, timestamp: new Date() };
-    await this.leadService.upsertLead(sessionId, userEntry, 'Weak lead');
+    await this.leadService.upsertLead(sessionId, userEntry, 'Weak lead', undefined, undefined, userId);
 
     // 3. Load full history
     const leadRecord = await this.leadService.findBySessionId(sessionId);
@@ -49,6 +54,7 @@ export class ChatService {
       aiResult.tag,
       aiResult.email,
       aiResult.companyName,
+      userId
     );
 
     // 6. Append Calendly link if hot
@@ -74,8 +80,8 @@ export class ChatService {
     return lead?.chatHistory.slice(1, lead?.chatHistory.length) || [];
   }
 
-  public async getHistories() {
-    const lead = await this.leadService.findAllChatHistories();
+  public async getHistories(userId: string) {
+    const lead = await this.leadService.findAllChatHistories(userId);
     return lead || [];
   }
 }

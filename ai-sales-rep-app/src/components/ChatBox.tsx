@@ -50,7 +50,7 @@ const ChatBox = ({
   };
 
   const handleFetchHistories = async () => {
-    const hists = await fetchChatHistories();
+    const hists = await fetchChatHistories(localStorage.getItem('user-x') as string);
     setHistories(hists);
   };
 
@@ -88,7 +88,7 @@ const ChatBox = ({
         </Box>
         {!(selectedConversationId || isNewChat) ? (
           <IconButton size="small" onClick={handleNewChat} sx={{ color: 'white' }}>
-            <ChatIcon />
+            <ChatIcon titleAccess='New Chat'/> start
           </IconButton>
         ) : (
           <IconButton size="small" onClick={onClose} sx={{ color: 'white' }}>

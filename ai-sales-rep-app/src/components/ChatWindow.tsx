@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Typography, CircularProgress, Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import { v4 as uuid } from 'uuid';
 import { fetchChatHistory, sendMessage, Message as ChatMessage } from '../services/api';
 import { InputBox } from './InputBox';
 import { MessageBubble } from './MessageBubble';
@@ -12,6 +13,7 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
   const [sessionId, setSessionId] = useState<string | undefined>(
     () => isNew ? (localStorage.removeItem('sessionId'), undefined) : conversationId || localStorage.getItem('sessionId') || undefined
   );
+  const [userId, setUserId] = useState<string | null>(localStorage.getItem('user-x'));
   const [loading, setLoading] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [options, setOptions] = useState<string[]>([]);
@@ -19,10 +21,17 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
 
   useEffect(() => {
     (async () => {
+      let _userId = localStorage.getItem('user-x');
+      if (!_userId) {
+        _userId = uuid();
+        localStorage.setItem('user-x', _userId);
+      }
+      setUserId(_userId);
+  
+  
       if (isNew) {
-        const res = await sendMessage('__start__', undefined);
+        const res = await sendMessage('__start__', undefined, _userId);;
         setSessionId(res.sessionId);
-        localStorage.setItem('sessionId', res.sessionId);
         setMessages([{ from: 'bot', text: res.reply }]);
         setOptions(res.options || []);
       } else if (sessionId) {
@@ -32,6 +41,7 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
       setLoadingHistory(false);
     })();
   }, [isNew]);
+  
 
   useEffect(() => {
     chatEnd.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,7 +52,7 @@ const ChatWindow = ({ conversationId }: { conversationId: string }) => {
     setMessages(prev => [...prev, { from: 'user', text }]);
     setLoading(true);
 
-    const res = await sendMessage(text, sessionId);
+    const res = await sendMessage(text, sessionId, userId as string);
     setMessages(prev => [...prev, { from: 'bot', text: res.reply }]);
     setOptions(res.options || []);
     setLoading(false);

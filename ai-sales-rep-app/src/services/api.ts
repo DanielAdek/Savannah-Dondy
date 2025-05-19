@@ -26,8 +26,8 @@ export type History = {
   chatHistory: Message[];
 }
 
-export const sendMessage = async (message: string, sessionId?: string): Promise<ChatResponse> => {
-  const response = await axios.post<ChatResponse>(backend + '/chat', { message, sessionId });
+export const sendMessage = async (message: string, sessionId?: string, userId?: string): Promise<ChatResponse> => {
+  const response = await axios.post<ChatResponse>(backend + '/chat', { message, sessionId, userId });
   return response.data;
 };
 
@@ -37,8 +37,7 @@ export const fetchChatHistory = async (sessionId: string): Promise<Message[]> =>
   return res.data.history;
 };
 
-export const fetchChatHistories = async (): Promise<History[]> => {
-  const res = await axios.get<{ histories: History[] }>(`${backend}/chat/histories`);
-  console.log(res.data);
+export const fetchChatHistories = async (userId: string): Promise<History[]> => {
+  const res = await axios.get<{ histories: History[] }>(`${backend}/chat/histories/${userId}`);
   return res.data.histories;
 }

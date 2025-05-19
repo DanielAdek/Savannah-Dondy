@@ -15,12 +15,12 @@ export class LeadService {
     return this.leadModel.findOne({ sessionId });
   }
 
-  public async findAllChatHistories() {
-    return this.leadModel.find();
+  public async findAllChatHistories(userId: string) {
+    return this.leadModel.find({ userId });
   }
 
-  public async createSession(sessionId: string) {
-    return this.leadModel.create({ sessionId });
+  public async createSession(sessionId: string, userId: string) {
+    return this.leadModel.create({ sessionId, userId });
   }
 
   public async upsertLead(
@@ -29,11 +29,13 @@ export class LeadService {
     tag: Lead['tag'],
     email?: string,
     companyName?: string,
+    userId?: string
   ) {
     const update: any = {
       $push: { chatHistory: entry },
       tag,
     };
+    update.userId = userId;
     if (email) update.email = email;
     if (companyName) update.companyName = companyName;
 
