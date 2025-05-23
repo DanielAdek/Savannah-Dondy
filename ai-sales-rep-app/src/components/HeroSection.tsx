@@ -14,7 +14,7 @@ const HeroSection = () => (
       px: 3,
     }}
   >
-    <Typography variant="h3" color="primary" gutterBottom>
+    <Typography variant="h4" color="primary" gutterBottom>
       Empowering Startups with World-Class Software Teams
     </Typography>
     <Typography variant="h6" color="text.secondary" mb={4}>

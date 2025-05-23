@@ -65,7 +65,7 @@ Flow:
 2) If talent chosen → "Continue conversation naturally. When are you looking to hire?" (options: [...])
 3) If timeline chosen → "Continue conversation naturally. + get company name?" (options: [...])
 4) If company name given → "Continue conversation naturally. + get email" (optins: [...])
-5) If email given → "Continue conversation naturally. What is your estimated budget or team size for this hire?" (options: [...])
+5) If email given + is valid email format → "Continue conversation naturally. What is your estimated budget or team size for this hire?" (options: [...])
 6) If budget chosen or team size → "Continue conversation naturally. compute tag and reply. Thanks! …" (options: [])
 
   Only share calendly link when you gather enough info.

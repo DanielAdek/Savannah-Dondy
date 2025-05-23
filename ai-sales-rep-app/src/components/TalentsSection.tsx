@@ -8,14 +8,14 @@ const talents = [
 ];
 
 const TalentsSection = () => (
-  <Box py={8} px={4} bgcolor="#f0f8ff">
+  <Box my={30} py={8} px={4} bgcolor="#f0f8ff">
     <Typography variant="h4" textAlign="center" gutterBottom>
       Meet Our Talents
     </Typography>
     <Grid container spacing={3} justifyContent="center">
       {talents.map((t, i) => (
         <Grid key={i}>
-          <Paper elevation={3} sx={{ p: 3 }}>
+          <Paper elevation={3} sx={{ p: 10 }}>
             <Typography variant="h6">{t.name}</Typography>
             <Typography variant="body2" color="text.secondary">
               {t.skill}
